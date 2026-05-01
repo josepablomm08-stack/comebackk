@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Comeback" />
+<meta name="theme-color" content="#F5EFE4" />
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iIzFGM0EyRSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTglIiBmb250LWZhbWlseT0iR2VvcmdpYSIgZm9udC1zaXplPSI4NSIgZmlsbD0iI0Q0QUYzNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zdHlsZT0iaXRhbGljIj5DPC90ZXh0Pjwvc3ZnPg==" />
+<title>The Comeback</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #F5EFE4;
+    color: #2C2418;
+    font-family: Georgia, "Times New Roman", serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 640px; margin: 0 auto; padding: 28px 20px; padding-top: max(28px, env(safe-area-inset-top)); padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+  .sans { font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
+
+  /* HEADER */
+  .header { padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid #C9B896; }
+  .header-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+  .label-tiny { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; color: #8B7355; font-weight: 500; }
+  .countdown { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; }
+  .h1 { font-size: 44px; font-weight: 700; line-height: 1; font-style: italic; color: #1F3A2E; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .h2 { font-size: 20px; color: #2C2418; margin-bottom: 4px; }
+  .focus { font-size: 14px; font-style: italic; color: #6B5B43; }
+
+  /* TABS */
+  .tabs { display: flex; border-bottom: 1px solid #E5DCC9; margin-bottom: 24px; }
+  .tab { flex: 1; padding: 12px 8px; font-family: -apple-system, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 500; color: #A89580; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .tab.active { color: #1F3A2E; border-bottom-color: #1F3A2E; }
+
+  /* DAY HEADER */
+  .day-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; }
+  .day-name { font-size: 24px; font-style: italic; color: #1F3A2E; }
+  .day-date { font-size: 13px; color: #6B5B43; }
+  .done-num { font-size: 32px; font-weight: 700; color: #1F3A2E; font-style: italic; }
+  .done-num span { color: #C9B896; }
+
+  /* WORKOUT CARD */
+  .workout-card { background: #1F3A2E; color: #F5EFE4; padding: 18px; border-radius: 4px; margin-bottom: 18px; }
+  .workout-label { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em; color: #A8C9A8; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .workout-name { font-size: 22px; font-style: italic; margin-bottom: 4px; }
+  .workout-detail { font-size: 13px; font-style: italic; color: #D4C9B0; }
+
+  /* SLIP-UP ALERT */
+  .alert { background: #F5E6D3; border-left: 3px solid #B8612B; padding: 14px; border-radius: 4px; margin-bottom: 18px; display: flex; gap: 10px; }
+  .alert-title { font-weight: 700; color: #8B4520; margin-bottom: 2px; font-size: 14px; }
+  .alert-text { color: #6B4520; font-size: 13px; }
+
+  /* ALL DONE */
+  .all-done { background: #1F3A2E; color: #F5EFE4; padding: 20px; border-radius: 4px; margin-bottom: 18px; text-align: center; }
+  .all-done-label { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; color: #A8C9A8; margin-bottom: 4px; }
+  .all-done-text { font-size: 19px; font-style: italic; }
+
+  /* HABITS */
+  .habits { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .habit { background: #FAF6EC; border: 1px solid #E5DCC9; border-radius: 4px; padding: 14px; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; font-family: inherit; }
+  .habit.done { background: #1F3A2E; border-color: #1F3A2E; color: #F5EFE4; }
+  .habit-row { display: flex; gap: 12px; align-items: flex-start; }
+  .habit-circle { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #C9B896; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .habit.done .habit-circle { background: #F5EFE4; border: none; color: #1F3A2E; font-weight: 700; }
+  .habit-content { flex: 1; min-width: 0; }
+  .habit-label { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .habit.done .habit-label { text-decoration: line-through; opacity: 0.75; }
+  .habit-why { font-size: 12px; font-style: italic; color: #8B7355; line-height: 1.4; }
+  .habit.done .habit-why { color: #A8C9A8; }
+  .habit-stats { display: flex; gap: 12px; margin-top: 6px; font-family: -apple-system, sans-serif; font-size: 11px; }
+  .streak { color: #B8612B; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  .habit.done .streak { color: #D4AF37; }
+  .week-count { color: #A89580; }
+  .habit.done .week-count { color: #D4C9B0; }
+
+  /* PROTOCOL */
+  .protocol-toggle { font-size: 14px; font-style: italic; color: #8B7355; text-decoration: underline; background: none; border: none; cursor: pointer; font-family: inherit; }
+  .protocol-box { display: none; margin-top: 12px; background: #FAF6EC; border: 1px solid #E5DCC9; padding: 16px; border-radius: 4px; font-size: 14px; }
+  .protocol-box.open { display: block; }
+  .protocol-box p { margin-bottom: 10px; color: #3D3221; }
+  .protocol-box p:last-child { margin-bottom: 0; }
+  .protocol-box strong { color: #1F3A2E; }
+
+  /* RECORDS */
+  .records { padding-top: 20px; margin-top: 28px; border-top: 1px solid #C9B896; }
+  .records-title { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em; color: #8B7355; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+  .records-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .record-num { font-size: 28px; font-style: italic; color: #1F3A2E; }
+  .record-label { font-size: 11px; font-style: italic; color: #8B7355; }
+  .records-footer { margin-top: 16px; padding-top: 14px; border-top: 1px solid #E5DCC9; font-size: 12px; font-style: italic; color: #6B5B43; }
+  .records-footer strong { color: #1F3A2E; font-style: normal; }
+
+  /* TIMELINE / GYM / FOOD */
+  .section-head { margin-bottom: 18px; }
+  .section-head h2 { font-size: 24px; font-style: italic; color: #1F3A2E; }
+  .section-head p { font-size: 14px; font-style: italic; color: #6B5B43; margin-top: 4px; }
+  .timeline-item { background: #FAF6EC; border: 1px solid #E5DCC9; padding: 14px; border-radius: 4px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+  .timeline-icon { font-size: 20px; flex-shrink: 0; }
+  .timeline-time { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em; color: #8B7355; font-weight: 700; margin-bottom: 2px; }
+  .timeline-label { font-size: 14px; font-weight: 500; color: #2C2418; }
+  .info-box { background: #1F3A2E; color: #F5EFE4; padding: 16px; border-radius: 4px; font-size: 14px; margin-top: 20px; }
+  .info-box strong { color: #D4AF37; }
+  .info-box p { margin-bottom: 8px; }
+  .info-box p:last-child { margin-bottom: 0; }
+  .info-card { background: #FAF6EC; border: 1px solid #E5DCC9; padding: 16px; border-radius: 4px; margin-bottom: 14px; }
+  .info-card h3 { font-size: 18px; font-style: italic; color: #1F3A2E; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .info-card .meta { font-size: 11px; font-style: italic; color: #8B7355; margin-bottom: 10px; }
+  .info-card ul { list-style: none; }
+  .info-card li { font-size: 14px; color: #3D3221; padding: 2px 0; padding-left: 12px; position: relative; }
+  .info-card li::before { content: '·'; position: absolute; left: 0; }
+  .info-card .footnote { font-size: 12px; font-style: italic; color: #6B5B43; margin-top: 10px; }
+  .info-card .upgrade { background: #F5EFE4; padding: 12px; border-radius: 4px; margin-top: 8px; font-size: 13px; }
+  .info-card .upgrade strong { color: #1F3A2E; }
+  .gym-day { padding: 14px; border-radius: 4px; background: #FAF6EC; border: 1px solid #E5DCC9; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+  .gym-day.today { background: #1F3A2E; color: #F5EFE4; border: none; }
+  .gym-icon { font-size: 24px; flex-shrink: 0; }
+  .gym-day-label { font-family: -apple-system, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em; font-weight: 700; color: #8B7355; margin-bottom: 2px; }
+  .gym-day.today .gym-day-label { color: #A8C9A8; }
+  .gym-name { font-size: 16px; font-weight: 600; }
+  .gym-detail { font-size: 12px; font-style: italic; color: #8B7355; }
+  .gym-day.today .gym-detail { color: #D4C9B0; }
+
+  .footer { text-align: center; margin-top: 36px; font-size: 11px; font-style: italic; color: #A89580; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-top">
+      <div class="label-tiny">· The Comeback ·</div>
+      <div style="display:flex; gap:12px; align-items:baseline;">
+        <div class="countdown" id="countdown">— d to finals</div>
+        <div class="countdown" id="today-pct" style="color:#1F3A2E">· 0% today</div>
+      </div>
+    </div>
+    <h1 class="h1" id="week-title">Week —.</h1>
+    <div class="h2" id="phase-name">Loading…</div>
+    <p class="focus" id="phase-focus"></p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="today">✓ Today</button>
+    <button class="tab" data-tab="schedule">⏱ Schedule</button>
+    <button class="tab" data-tab="food">🍽 Food</button>
+    <button class="tab" data-tab="gym">🏋 Gym</button>
+  </div>
+
+  <!-- TODAY -->
+  <div id="tab-today">
+    <div class="day-row">
+      <div>
+        <div class="label-tiny">Today</div>
+        <div class="day-name" id="day-name"></div>
+        <div class="day-date" id="day-date"></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="label-tiny">Done</div>
+        <div class="done-num"><span id="done-count">0</span><span id="done-total">/9</span></div>
+      </div>
+    </div>
+
+    <div class="workout-card">
+      <div class="workout-label">🏋 Today's Training</div>
+      <div class="workout-name" id="workout-name"></div>
+      <div class="workout-detail" id="workout-detail"></div>
+    </div>
+
+    <div class="alert" id="slipup-alert" style="display:none;">
+      <span style="font-size:20px;">⚠</span>
+      <div>
+        <div class="alert-title">Never miss twice.</div>
+        <div class="alert-text">Yesterday wasn't perfect. That's data, not failure. Today matters more.</div>
+      </div>
+    </div>
+
+    <div class="all-done" id="all-done" style="display:none;">
+      <div class="all-done-label">✨ Today complete</div>
+      <div class="all-done-text">All nine. That's the day.</div>
+    </div>
+
+    <div class="habits" id="habits-list"></div>
+
+    <button class="protocol-toggle" onclick="document.getElementById('protocol').classList.toggle('open')">Bad day? Read the slip-up protocol →</button>
+    <div class="protocol-box" id="protocol">
+      <p><strong>1. Forgetting ≠ failing.</strong> ADHD makes you forget. The system absorbs it. Just check what you remember and move on.</p>
+      <p><strong>2. Never miss twice.</strong> One miss = data. Two = pattern. Don't let one bad day become a bad week.</p>
+      <p><strong>3. 70% wins.</strong> 5/7 days at 100% = quitting. 7/7 at 70% = success.</p>
+      <p><strong>4. Lower the bar, not the goal.</strong> Bad day? 10-min study counts. 5-min walk counts. Streak &gt; size.</p>
+      <p><strong>5. Open the tracker tomorrow.</strong> Even if today was a 0. The shame spiral kills more than the bad day did.</p>
+    </div>
+
+    <div class="records">
+      <div class="records-title">📈 Personal records</div>
+      <div class="records-grid">
+        <div><div class="record-num" id="rec-pct">0%</div><div class="record-label">overall completion rate</div></div>
+        <div><div class="record-num" id="rec-streak">0</div><div class="record-label">longest streak (days)</div></div>
+        <div><div class="record-num" id="rec-days">0</div><div class="record-label">days you showed up</div></div>
+        <div><div class="record-num" id="rec-perfect">0</div><div class="record-label">perfect days (all 9)</div></div>
+      </div>
+      <div class="records-footer">Total habits checked off: <strong id="rec-total">0</strong></div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div id="tab-schedule" style="display:none;">
+    <div class="section-head">
+      <div class="label-tiny">Daily timeline</div>
+      <h2 id="sched-day"></h2>
+      <p>No decisions to make. Follow the time.</p>
+    </div>
+    <div id="timeline-list"></div>
+    <div class="info-box"><strong>Why this works:</strong> ADHD brains don't fail at habits — they fail at decisions. Every time slot is decided. You don't choose, you do what the clock says.</div>
+  </div>
+
+  <!-- FOOD -->
+  <div id="tab-food" style="display:none;">
+    <div class="section-head">
+      <div class="label-tiny">Same. Every. Day.</div>
+      <h2>Zero-decision food</h2>
+      <p>Variety is the enemy of consistency.</p>
+    </div>
+
+    <div class="label-tiny" style="margin-bottom:8px; font-weight:700;">Breakfast · 6:00 AM · Pick One</div>
+
+    <div class="info-card">
+      <h3>☕ Option 1 · Overnight Oats</h3>
+      <div class="meta">~350–400 cal · 25g protein · prep night before</div>
+      <ul>
+        <li>½ cup rolled oats</li>
+        <li>½ cup milk (or almond milk)</li>
+        <li>1 scoop protein powder OR Greek yogurt</li>
+        <li>1 tbsp chia seeds</li>
+        <li>Handful berries or 1 sliced banana</li>
+        <li>Cinnamon</li>
+      </ul>
+      <div class="footnote">Make 5 jars Sunday night → grab one each morning</div>
+    </div>
+
+    <div class="info-card">
+      <h3>☕ Option 2 · Egg & Avocado Toast</h3>
+      <div class="meta">~380 cal · 20g protein · 5 min, no prep</div>
+      <ul>
+        <li>2 eggs (scrambled or fried)</li>
+        <li>1 slice whole grain or sourdough toast</li>
+        <li>¼ avocado, mashed on top</li>
+        <li>Salt, pepper, optional hot sauce</li>
+      </ul>
+      <div class="footnote">Cook eggs while toast is toasting. Done in 5 min.</div>
+    </div>
+
+    <div class="info-card">
+      <div class="label-tiny" style="font-weight:700; margin-bottom:8px;">🍴 Lunch · 3:20 PM · Mom's Cooking</div>
+      <p style="font-size:14px; color:#3D3221;">Your big meal of the day. Eat normally — don't restrict here. Fuels the gym at 4:20pm and the study blocks after.</p>
+    </div>
+
+    <div class="info-card">
+      <div class="label-tiny" style="font-weight:700; margin-bottom:8px;">🌙 Dinner · 8:30 PM · The Sandwich</div>
+      <p style="font-size:14px; color:#3D3221; margin-bottom:10px;"><strong>Ham + cheese sandwich, no mayo.</strong> Same every night. Easy. Done.</p>
+      <div class="upgrade">
+        <strong>Two small upgrades for fat loss:</strong>
+        <ul style="margin-top:6px;">
+          <li><strong>Add greens:</strong> spinach or lettuce in the sandwich, or cucumber/carrots on the side</li>
+          <li><strong>Whole grain or sourdough bread</strong> if available — keeps you full longer</li>
+        </ul>
+      </div>
+      <div class="footnote">No mayo is a great call — saves ~100 cal per sandwich</div>
+    </div>
+
+    <div class="info-box"><strong>Why this works for fat loss:</strong> Big lunch at 3:20pm fuels your workout. Light sandwich at 8:30pm means you don't go to bed full. You burn the heavy meal all afternoon and evening. No counting calories.</div>
+  </div>
+
+  <!-- GYM -->
+  <div id="tab-gym" style="display:none;">
+    <div class="section-head">
+      <div class="label-tiny">Your split</div>
+      <h2>5-Day Plan</h2>
+      <p>Gym closed Monday. Train 4:20pm after lunch.</p>
+    </div>
+    <div id="gym-list"></div>
+    <div class="info-box">
+      <p><strong>Fat loss truth:</strong> 4 weeks isn't long enough for major visual change, but you WILL feel leaner, sleep better, and have more energy.</p>
+      <p><strong>10k steps tip:</strong> Walk to/from school, take stairs, walk during phone calls.</p>
+    </div>
+  </div>
+
+  <div class="footer">Tap to mark done. Saves automatically. Come back tomorrow.</div>
+</div>
+
+<script>
+  const HABITS = [
+    { id: 'morning_no_phone', label: 'No phone first 30 min', emoji: '🌅', why: '5:50am wake → 6:20am earliest phone' },
+    { id: 'breakfast', label: 'Eat breakfast', emoji: '🥣', why: 'Oats or egg toast — whichever is easier' },
+    { id: 'workout', label: "Today's training", emoji: '🏋️', why: 'See split below' },
+    { id: 'block_1', label: 'Block 1: English (25m)', emoji: '📕', why: 'Missing work first → IO prep' },
+    { id: 'block_2', label: 'Block 2: Math/Physics (25m)', emoji: '🧮', why: 'Alternate days. Problems only.' },
+    { id: 'block_3', label: 'Block 3: Next-due / Spanish IO (25m)', emoji: '📘', why: "Whatever's due soonest" },
+    { id: 'dinner', label: 'Dinner sandwich + greens', emoji: '🥪', why: 'Ham, cheese, bread + something green' },
+    { id: 'phone_curfew', label: 'Phone away by 10pm', emoji: '📵', why: 'Different room. Not bedside.' },
+    { id: 'prep_tomorrow', label: 'Prep breakfast + gym clothes', emoji: '✅', why: 'Tomorrow-you will thank you' },
+  ];
+
+  const SPLIT = {
+    1: { name: '10k Steps Walk', detail: 'Gym closed. Walk after school. Active recovery.', icon: '🚶' },
+    2: { name: '5–7K Run + Chest', detail: 'Cardio first or after — your call', icon: '🏃‍♂️' },
+    3: { name: 'Shoulders + Triceps', detail: 'Push volume day', icon: '💪' },
+    4: { name: '7K Run + Abs', detail: 'Cardio + core finisher', icon: '🏃' },
+    5: { name: 'Back + Biceps + 10k Steps', detail: 'Pull day + fat loss bonus', icon: '🔙' },
+    6: { name: 'Optional Walk / Rest', detail: 'Recover. Walk if you feel like it.', icon: '😌' },
+    0: { name: 'Rest + Meal Prep', detail: "Make this week's overnight oats", icon: '🥣' },
+  };
+
+  const WEEKDAY_TIMELINE = [
+    { time: '5:50 AM', label: 'Wake up. NO PHONE.', icon: '☀️' },
+    { time: '6:00 AM', label: 'Breakfast (oats or egg toast)', icon: '🥣' },
+    { time: '6:30 AM', label: 'Get ready / travel', icon: '🚗' },
+    { time: '7:45 AM', label: 'School starts', icon: '🏫' },
+    { time: '2:20 PM', label: 'School ends', icon: '🔔' },
+    { time: '3:10 PM', label: 'Home', icon: '🏠' },
+    { time: '3:20 PM', label: "Lunch — mom's cooking (big meal)", icon: '🍛' },
+    { time: '4:00 PM', label: 'Leave for gym (beat traffic)', icon: '🚗' },
+    { time: '4:20 PM', label: "Today's workout / run", icon: '🏋️' },
+    { time: '5:50 PM', label: 'Home + shower', icon: '🚿' },
+    { time: '6:30 PM', label: 'Block 1 — English (25m)', icon: '📕' },
+    { time: '7:00 PM', label: 'Break (10 min, no phone)', icon: '⏸️' },
+    { time: '7:10 PM', label: 'Block 2 — Math or Physics (25m)', icon: '🧮' },
+    { time: '7:35 PM', label: 'Break (10 min)', icon: '⏸️' },
+    { time: '7:55 PM', label: 'Block 3 — Next-due / Spanish IO (25m)', icon: '📘' },
+    { time: '8:30 PM', label: 'Dinner — ham & cheese sandwich + greens', icon: '🥪' },
+    { time: '9:30 PM', label: 'Prep breakfast + gym clothes for tomorrow', icon: '✅' },
+    { time: '10:00 PM', label: 'Phone in another room', icon: '📵' },
+    { time: '10:30 PM', label: 'Lights out', icon: '😴' },
+  ];
+
+  const SATURDAY_TIMELINE = [
+    { time: '7:30 AM', label: 'Wake up (sleep in a bit)', icon: '☀️' },
+    { time: '8:00 AM', label: 'Breakfast (oats or egg toast)', icon: '🥣' },
+    { time: '9:00 AM', label: 'Optional: walk or light activity', icon: '🚶' },
+    { time: '12:00 PM', label: "Lunch (mom's cooking)", icon: '🍛' },
+    { time: '1:00–5:00 PM', label: 'Catch-up study OR free time', icon: '📚' },
+    { time: '5:00 PM', label: 'Optional gym session if you want', icon: '🏋️' },
+    { time: '8:30 PM', label: 'Dinner — sandwich + greens', icon: '🥪' },
+    { time: '10:00 PM', label: 'Phone in another room', icon: '📵' },
+    { time: '10:30 PM', label: 'Lights out', icon: '😴' },
+  ];
+
+  const SUNDAY_TIMELINE = [
+    { time: '7:30 AM', label: 'Wake up', icon: '☀️' },
+    { time: '8:00 AM', label: 'Breakfast (oats or egg toast)', icon: '🥣' },
+    { time: '9:00 AM', label: 'Make 5 jars of overnight oats for the week', icon: '🥣' },
+    { time: '10:00 AM', label: 'Optional: walk for 10k steps', icon: '🚶' },
+    { time: '12:00 PM', label: "Lunch (mom's cooking)", icon: '🍛' },
+    { time: '2:00–5:00 PM', label: 'Catch-up study / IA or EE work', icon: '📚' },
+    { time: '6:00 PM', label: "Lay out Monday's gym clothes", icon: '👕' },
+    { time: '7:00 PM', label: 'Review the week ahead in the tracker', icon: '📋' },
+    { time: '8:30 PM', label: 'Dinner — sandwich + greens', icon: '🥪' },
+    { time: '10:00 PM', label: 'Phone in another room', icon: '📵' },
+    { time: '10:30 PM', label: 'Lights out — Monday is back', icon: '😴' },
+  ];
+
+  const START_DATE = new Date('2026-05-04');
+  const FINALS_DATE = new Date('2026-06-01');
+
+  function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function daysAgoKey(n) {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function loadData() {
+    try { return JSON.parse(localStorage.getItem('comeback_v1') || '{}'); }
+    catch(e) { return {}; }
+  }
+  function saveData(data) { localStorage.setItem('comeback_v1', JSON.stringify(data)); }
+
+  let data = loadData();
+  const today = todayKey();
+
+  function toggle(habitId) {
+    if (!data[today]) data[today] = {};
+    data[today][habitId] = !data[today][habitId];
+    saveData(data);
+    render();
+  }
+
+  function getStreak(habitId) {
+    let s = 0;
+    for (let i = 0; i < 365; i++) {
+      if (data[daysAgoKey(i)] && data[daysAgoKey(i)][habitId]) s++;
+      else break;
+    }
+    return s;
+  }
+  function getLast7(habitId) {
+    let c = 0;
+    for (let i = 0; i < 7; i++) if (data[daysAgoKey(i)] && data[daysAgoKey(i)][habitId]) c++;
+    return c;
+  }
+
+  function getPhase() {
+    const now = new Date();
+    const days = Math.floor((now - START_DATE) / (1000*60*60*24));
+    if (days < 0) return { week: 0, phase: 'Prep Phase', focus: 'Get groceries, prep oats, set up. Day one is May 4.' };
+    if (days < 14) return { week: Math.max(1, Math.floor(days / 7) + 1), phase: 'Repair + Build', focus: 'English missing work + reps. Gym 4x.' };
+    if (days < 21) return { week: 3, phase: 'IO Week', focus: 'Spanish + English IO recordings. Finals review begins.' };
+    if (days < 31) return { week: 4, phase: 'Sprint', focus: 'Heavy review. Lock in weak subjects.' };
+    return { week: 5, phase: 'Finals Taper', focus: 'Gym drops. SLEEP > everything.' };
+  }
+  function daysToFinals() {
+    return Math.ceil((FINALS_DATE - new Date()) / (1000*60*60*24));
+  }
+
+  function render() {
+    const now = new Date();
+    const dow = now.getDay();
+    const phase = getPhase();
+    const ftf = daysToFinals();
+
+    // Header
+    document.getElementById('countdown').textContent = ftf > 0 ? ftf + 'd to finals' : 'FINALS WEEK';
+    const cdEl = document.getElementById('countdown');
+    cdEl.style.color = ftf > 14 ? '#1F3A2E' : ftf > 7 ? '#B8612B' : '#8B2E2E';
+    document.getElementById('week-title').textContent = 'Week ' + phase.week + '.';
+    document.getElementById('phase-name').textContent = phase.phase;
+    document.getElementById('phase-focus').textContent = phase.focus;
+
+    // Day
+    document.getElementById('day-name').textContent = now.toLocaleDateString('en-US', { weekday: 'long' });
+    document.getElementById('day-date').textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    document.getElementById('sched-day').textContent = now.toLocaleDateString('en-US', { weekday: 'long' });
+
+    // Workout
+    const w = SPLIT[dow];
+    document.getElementById('workout-name').textContent = w.icon + ' ' + w.name;
+    document.getElementById('workout-detail').textContent = w.detail;
+
+    // Habits
+    const todayData = data[today] || {};
+    const completed = HABITS.filter(h => todayData[h.id]).length;
+    document.getElementById('done-count').textContent = completed;
+    document.getElementById('done-total').textContent = '/' + HABITS.length;
+    const pct = Math.round((completed / HABITS.length) * 100);
+    document.getElementById('today-pct').textContent = '· ' + pct + '% today';
+
+    // Slip-up risk
+    const yKey = daysAgoKey(1);
+    const yData = data[yKey];
+    const slipRisk = yData && HABITS.some(h => !yData[h.id]);
+    document.getElementById('slipup-alert').style.display = (slipRisk && completed < HABITS.length) ? 'flex' : 'none';
+    document.getElementById('all-done').style.display = (completed === HABITS.length) ? 'block' : 'none';
+
+    // Habit list
+    const list = document.getElementById('habits-list');
+    list.innerHTML = '';
+    HABITS.forEach(h => {
+      const done = !!todayData[h.id];
+      const streak = getStreak(h.id);
+      const last7 = getLast7(h.id);
+      const btn = document.createElement('button');
+      btn.className = 'habit' + (done ? ' done' : '');
+      btn.onclick = () => toggle(h.id);
+      btn.innerHTML = '<div class="habit-row"><div class="habit-circle">' + (done ? '✓' : h.emoji) + '</div><div class="habit-content"><div class="habit-label">' + h.label + '</div><div class="habit-why">' + h.why + '</div><div class="habit-stats">' + (streak > 0 ? '<span class="streak">🔥 ' + streak + 'd</span>' : '') + '<span class="week-count">' + last7 + '/7 wk</span></div></div></div>';
+      list.appendChild(btn);
+    });
+
+    // Records
+    const allDays = Object.keys(data);
+    const totalDays = allDays.filter(k => Object.values(data[k]).some(v => v)).length;
+    const totalHabits = Object.values(data).reduce((s, d) => s + Object.values(d).filter(v => v).length, 0);
+    const overallPct = totalDays > 0 ? Math.round((totalHabits / (totalDays * HABITS.length)) * 100) : 0;
+    let bestStreak = 0;
+    HABITS.forEach(h => {
+      let cur = 0, best = 0;
+      for (let i = 0; i < 365; i++) {
+        if (data[daysAgoKey(i)] && data[daysAgoKey(i)][h.id]) { cur++; if (cur > best) best = cur; }
+        else cur = 0;
+      }
+      if (best > bestStreak) bestStreak = best;
+    });
+    const perfectDays = allDays.filter(k => HABITS.every(h => data[k][h.id])).length;
+    document.getElementById('rec-pct').textContent = overallPct + '%';
+    document.getElementById('rec-streak').textContent = bestStreak;
+    document.getElementById('rec-days').textContent = totalDays;
+    document.getElementById('rec-perfect').textContent = perfectDays;
+    document.getElementById('rec-total').textContent = totalHabits;
+
+    // Schedule
+    let timeline;
+    if (dow === 6) timeline = SATURDAY_TIMELINE;
+    else if (dow === 0) timeline = SUNDAY_TIMELINE;
+    else timeline = WEEKDAY_TIMELINE;
+    const tl = document.getElementById('timeline-list');
+    tl.innerHTML = '';
+    timeline.forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'timeline-item';
+      div.innerHTML = '<div class="timeline-icon">' + t.icon + '</div><div><div class="timeline-time">' + t.time + '</div><div class="timeline-label">' + t.label + '</div></div>';
+      tl.appendChild(div);
+    });
+
+    // Gym
+    const gymList = document.getElementById('gym-list');
+    gymList.innerHTML = '';
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    [1,2,3,4,5,6,0].forEach(d => {
+      const sw = SPLIT[d];
+      const isToday = d === dow;
+      const div = document.createElement('div');
+      div.className = 'gym-day' + (isToday ? ' today' : '');
+      div.innerHTML = '<div class="gym-icon">' + sw.icon + '</div><div><div class="gym-day-label">' + dayNames[d] + (isToday ? ' · TODAY' : '') + '</div><div class="gym-name">' + sw.name + '</div><div class="gym-detail">' + sw.detail + '</div></div>';
+      gymList.appendChild(div);
+    });
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(t => {
+    t.onclick = () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      ['today','schedule','food','gym'].forEach(id => {
+        document.getElementById('tab-' + id).style.display = 'none';
+      });
+      document.getElementById('tab-' + t.dataset.tab).style.display = 'block';
+    };
+  });
+
+  render();
+</script>
+</body>
+</html>
